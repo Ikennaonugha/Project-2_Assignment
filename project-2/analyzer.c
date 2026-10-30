@@ -140,3 +140,15 @@ void parse_and_process_words(void) {
         }
     }
 }
+
+void memory_address_inspection(void) {
+    print_header();
+    printf("\nMEMORY ADDRESS INSPECTION\n");
+    printf("Text buffer address          : %p\n", (void *)engine.text_buffer);
+    printf("Word statistics array address: %p\n", (void *)engine.stats);
+    if (engine.distinct_words > 0) {
+        printf(" Selected word-stat entry [0] : %p\n", (void *)&engine.stats[0]);
+    } else {
+        printf(" Selected word-stat entry: N/A\n");
+    }
+}
