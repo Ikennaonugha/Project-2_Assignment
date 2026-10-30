@@ -183,3 +183,119 @@ void calculate_average(void) {
     float avg = sum / (float)registry.size;
     printf("\nClass Average Grade: %.2f across %zu students.\n", avg, registry.size);
 }
+
+void find_top_student(void) {
+    print_header();
+    if (registry.size == 0) {
+        printf("\nNo student records available.\n");
+        return;
+    }
+
+    size_t top_idx = 0;
+    for (size_t i = 1; i < registry.size; i++) {
+        if ((*(registry.data + i))->grade > registry.data[top_idx]->grade) {
+            top_idx = i;
+        }
+    }
+
+    Student *top = registry.data[top_idx];
+    printf("\n--- Top-Performing Student ---\n");
+    printf("Name: %s\n", top->name);
+    printf("ID: %d\n", top->id);
+    printf("Course: %s\n", top->course);
+    printf("Grade: %.2f\n", top->grade);
+}
+
+void search_student(void) {
+    print_header();
+    printf("\n--- Search Student ---\n");
+    printf("[1] Search by ID\n");
+    printf("[2] Search by Name\n");
+    printf("Select option: ");
+
+    int choice;
+    if (scanf("%d", &choice) != 1) {
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
+    if (choice == 1) {
+        int target_id;
+        printf("Enter Student ID: ");
+        scanf("%d", &target_id);
+        clear_input_buffer();
+
+        int found = 0;
+        for (size_t i = 0; i < registry.size; i++) {
+            if (registry.data[i]->id == target_id) {
+                Student *s = registry.data[i];
+                printf("\nFound -> ID: %d Name: %s Course: %s Grade: %.2f\n", s->id, s->name, s->course, s->grade);
+                found = 1;
+                break;
+            }
+        }
+        if (!found)
+            printf("Student with ID %d not found.\n", target_id);
+
+    } else if (choice == 2) {
+        char target_name[MAX_STR];
+        printf("Enter Name: ");
+        fgets(target_name, sizeof(target_name), stdin);
+        target_name[strcspn(target_name, "\n")] = '\0';
+
+        int found = 0;
+        for (size_t i = 0; i < registry.size; i++) {
+            if (strstr(registry.data[i]->name, target_name) != NULL) {
+                Student *s = registry.data[i];
+                printf("\nFound -> ID: %d Name: %s Course: %s Grade: %.2f\n", s->id, s->name, s->course, s->grade);
+                found = 1;
+            }
+        }
+        if (!found)
+            printf("No student named '%s' found.\n", target_name);
+    }
+}
+
+void remove_student(void) {
+    print_header();
+    printf("\n--- Remove Student Record ---\n");
+    int target_id;
+    printf("Enter Student ID to remove: ");
+    if (scanf("%d", &target_id) != 1) {
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
+    int found_idx = -1;
+    for (size_t i = 0; i < registry.size; i++) {
+        if (registry.data[i]->id == target_id) {
+            found_idx = (int)i;
+            break;
+        }
+    }
+
+    if (found_idx == -1) {
+        printf("Student ID %d not found.\n", target_id);
+        return;
+    }
+
+    free(registry.data[found_idx]);
+
+    for (size_t i = found_idx; i < registry.size - 1; i++) {
+        registry.data[i] = registry.data[i + 1];
+    }
+    registry.size--;
+
+    if (registry.capacity > INITIAL_CAPACITY && registry.size < registry.capacity - 5) {
+        size_t new_capacity = registry.capacity - 5;
+        Student **temp = realloc(registry.data, new_capacity * sizeof(Student *));
+        if (temp != NULL) {
+            registry.data = temp;
+            registry.capacity = new_capacity;
+        }
+    }
+
+    printf("Student record removed successfully. Total records: %zu\n", registry.size);
+}
