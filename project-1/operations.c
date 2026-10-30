@@ -29,3 +29,25 @@ void initial_dataset(void) {
     }
     registry.size = 10;
 }
+
+//to prevent duplicate ids, done recursively
+int id_exists(int id, size_t idx) {
+    if (idx >= registry.size)
+        return 0;
+    if (registry.data[idx]->id == id)
+        return 1;
+    return id_exists(id, idx + 1);
+}
+
+//to clear the input buffer
+void clear_input_buffer(void) {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+//output header
+void print_header(void) {
+    printf("\nStudent ID: 1001 (I don't know my student ID)\n");
+    printf("Project: Dynamic Academic Performance and Risk Analysis Engine\n");
+    printf("Custom Analysis: Academic Risk Index (ARI)\n");
+}
