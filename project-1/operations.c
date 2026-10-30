@@ -299,3 +299,23 @@ void remove_student(void) {
 
     printf("Student record removed successfully. Total records: %zu\n", registry.size);
 }
+
+void custom_analysis(void) {
+    print_header();
+    printf("\n-----------------------------------------\n");
+    printf(" CUSTOM ANALYSIS: ACADEMIC RISK INDEX (ARI)\n");
+    printf("------------------------------------------\n");
+    printf(" %-6s  %-20s  %-6s  %-10s  %-15s \n", "ID", "Name", "Grade", "ARI Score", "Risk Category");
+    printf("-------------------------------------------------------------------\n");
+
+    for (size_t i = 0; i < registry.size; i++) {
+        Student *s = registry.data[i];
+        float deficit = 100.0f - s->grade;
+        float multiplier = (s->grade < 50.0f) ? 1.5f : 1.0f;
+        float ari = deficit * multiplier;
+
+        const char *category = (ari > 50.0f) ? "HIGH RISK" : (ari > 20.0f ? "MODERATE" : "LOW RISK");
+
+        printf(" %-6d  %-20s  %6.2f  %10.2f  %-15s \n", s->id, s->name, s->grade, ari, category);
+    }
+}
