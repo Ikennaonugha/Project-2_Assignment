@@ -168,3 +168,18 @@ void sort_students(void) {
     printf("Students successfully sorted\n");
     display_students();
 }
+
+void calculate_average(void) {
+    print_header();
+    if (registry.size == 0) {
+        printf("\nNo student records available.\n");
+        return;
+    }
+
+    float sum = 0.0f;
+    for (size_t i = 0; i < registry.size; i++) {
+        sum += (*(registry.data + i))->grade;
+    }
+    float avg = sum / (float)registry.size;
+    printf("\nClass Average Grade: %.2f across %zu students.\n", avg, registry.size);
+}
