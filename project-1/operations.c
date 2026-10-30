@@ -319,3 +319,54 @@ void custom_analysis(void) {
         printf(" %-6d  %-20s  %6.2f  %10.2f  %-15s \n", s->id, s->name, s->grade, ari, category);
     }
 }
+
+void generate_summary_report(void) {
+    print_header();
+    if (registry.size == 0) {
+        printf("\nNo records available to summarize.\n");
+        return;
+    }
+
+    float sum = 0.0f;
+    float highest = registry.data[0]->grade;
+    float lowest = registry.data[0]->grade;
+    int pass_count = 0;
+    int fail_count = 0;
+    float pass_threshold = 50.0f;
+
+    for (size_t i = 0; i < registry.size; i++) {
+        float g = registry.data[i]->grade;
+        sum += g;
+        if (g > highest) highest = g;
+        if (g < lowest) lowest = g;
+        if (g >= pass_threshold) pass_count++;
+        else fail_count++;
+    }
+
+    float average = sum / (float)registry.size;
+
+    printf("\n----------------------------------------\n");
+    printf(" SUMMARY REPORT\n");
+    printf("------------------------------------------\n");
+    printf(" Total Student Records  : %zu\n", registry.size);
+    printf(" Current Memory Capacity: %zu slots\n", registry.capacity);
+    printf(" Class Average Grade    : %.2f\n", average);
+    printf(" Highest Grade          : %.2f\n", highest);
+    printf(" Lowest Grade           : %.2f\n", lowest);
+    printf(" Passing Students: %d\n", pass_count);
+    printf(" At-Risk Students: %d\n", fail_count);
+    printf("------------------------------------------\n");
+    
+    custom_analysis();
+}
+
+void exit_program(void) {
+    print_header();
+    printf("\nReleasing all dynamically allocated heap memory\n");
+    for (size_t i = 0; i < registry.size; i++) {
+        free(registry.data[i]);
+    }
+    free(registry.data);
+    printf("Memory successfully freed. Exiting program.\n");
+    exit(0);
+}
