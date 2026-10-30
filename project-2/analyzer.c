@@ -80,3 +80,63 @@ void input_custom_text(void) {
     parse_and_process_words();
     printf("Successful! Total words: %d\n", engine.total_words);
 }
+
+//parsing using pointers
+void parse_and_process_words(void) {
+    engine.distinct_words = 0;
+    engine.total_words = 0;
+
+    char *p = engine.text_buffer;
+    while (*p != '\0') {
+        while (*p != '\0' && !isalpha((unsigned char)*p)) {
+            p++;
+        }
+        if (*p == '\0') break;
+
+        //get word character by character
+        char raw_word[128];
+        int len = 0;
+        while (*p != '\0' && (isalpha((unsigned char)*p) || *p == '-')) {
+            if (len < (int)sizeof(raw_word) - 1) {
+                raw_word[len++] = tolower((unsigned char)*p);
+            }
+            p++;
+        }
+        raw_word[len] = '\0';
+
+        if (len > 0) {
+            engine.total_words++;
+
+            // Handle 39-character limit safely by truncating to 39 chars
+            char clean_word[MAX_WORD_LEN];
+            snprintf(clean_word, sizeof(clean_word), "%s", raw_word);
+
+            //check if it already exists
+            int found = 0;
+            for (size_t i = 0; i < engine.distinct_words; i++) {
+                if (strcmp(engine.stats[i].name, clean_word) == 0) {
+                    engine.stats[i].count++;
+                    found = 1;
+                    break;
+                }
+            }
+
+            //add to stats if found
+            if (!found) {
+                if (engine.distinct_words >= engine.stats_capacity) {
+                    size_t new_cap = engine.stats_capacity + 25;
+                    WordStat *temp = realloc(engine.stats, new_cap * sizeof(WordStat));
+                    if (!temp) {
+                        perror("Memory reallocation failed for word stats");
+                        return;
+                    }
+                    engine.stats = temp;
+                    engine.stats_capacity = new_cap;
+                }
+                strcpy(engine.stats[engine.distinct_words].name, clean_word);
+                engine.stats[engine.distinct_words].count = 1;
+                engine.distinct_words++;
+            }
+        }
+    }
+}
