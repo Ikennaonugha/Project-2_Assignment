@@ -51,3 +51,67 @@ void print_header(void) {
     printf("Project: Dynamic Academic Performance and Risk Analysis Engine\n");
     printf("Custom Analysis: Academic Risk Index (ARI)\n");
 }
+
+void add_student(void) {
+    print_header();
+    printf("\n--- Add New Student Record ---\n");
+    
+    int id;
+    printf("Enter Unique Student ID: ");
+    if (scanf("%d", &id) != 1) {
+        printf("Invalid input.\n");
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
+    if (id_exists(id, 0)) {
+        printf("Error: Student ID %d already exists!\n", id);
+        return;
+    }
+
+    char name[MAX_STR], course[MAX_STR];
+    printf("Enter Full Name: ");
+    if (fgets(name, sizeof(name), stdin) != NULL) {
+        name[strcspn(name, "\n")] = '\0';
+    }
+
+    printf("Enter Course: ");
+    if (fgets(course, sizeof(course), stdin) != NULL) {
+        course[strcspn(course, "\n")] = '\0';
+    }
+
+    float grade;
+    printf("Enter Grade: ");
+    if (scanf("%f", &grade) != 1 || grade < 0.0f || grade > 100.0f) {
+        printf("Error: Invalid grade! Must be between 0 and 100.\n");
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
+    if (registry.size >= registry.capacity) {
+        size_t new_capacity = registry.capacity + 5;
+        Student **temp = realloc(registry.data, new_capacity * sizeof(Student *));
+        if (temp == NULL) {
+            perror("Memory reallocation failed");
+            return;
+        }
+        registry.data = temp;
+        registry.capacity = new_capacity;
+    }
+
+    registry.data[registry.size] = malloc(sizeof(Student));
+    if (registry.data[registry.size] == NULL) {
+        perror("Memory allocation failed for new student");
+        return;
+    }
+
+    registry.data[registry.size]->id = id;
+    snprintf(registry.data[registry.size]->name, MAX_STR, "%s", name);
+    snprintf(registry.data[registry.size]->course, MAX_STR, "%s", course);
+    registry.data[registry.size]->grade = grade;
+    registry.size++;
+
+    printf("Success: Student record added. Total records: %zu\n", registry.size);
+}
