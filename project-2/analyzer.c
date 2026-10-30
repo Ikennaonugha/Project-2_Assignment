@@ -152,3 +152,177 @@ void memory_address_inspection(void) {
         printf(" Selected word-stat entry: N/A\n");
     }
 }
+
+void count_words(void) {
+    print_header();
+    printf("\n--- Word Count Analysis ---\n");
+    printf("Total Words in Text : %d\n", engine.total_words);
+    printf("Distinct Words      : %zu\n", engine.distinct_words);
+}
+
+void longest_word(void) {
+    print_header();
+    if (engine.distinct_words == 0) {
+        printf("\nNo words recorded.\n");
+        return;
+    }
+
+    size_t longest_idx = 0;
+    for (size_t i = 1; i < engine.distinct_words; i++) {
+        if (strlen(engine.stats[i].name) > strlen(engine.stats[longest_idx].name)) {
+            longest_idx = i;
+        }
+    }
+
+    printf("\n--- Longest Word Analysis ---\n");
+    printf("Longest Word : %s\n", engine.stats[longest_idx].name);
+    printf("Length       : %zu characters\n", strlen(engine.stats[longest_idx].name));
+}
+
+void most_frequent(void) {
+    print_header();
+    if (engine.distinct_words == 0) {
+        printf("\nNo words recorded.\n");
+        return;
+    }
+
+    size_t freq_idx = 0;
+    for (size_t i = 1; i < engine.distinct_words; i++) {
+        if (engine.stats[i].count > engine.stats[freq_idx].count) {
+            freq_idx = i;
+        }
+    }
+
+    printf("\n--- Most Frequent Word ---\n");
+    printf("Word      : %s\n", engine.stats[freq_idx].name);
+    printf("Frequency : %d occurrences\n", engine.stats[freq_idx].count);
+}
+
+void display_word_statistics(void) {
+    print_header();
+    printf("\n--- Distinct Word Frequency Table ---\n");
+    printf("---------------------------------------------------\n");
+    printf(" %-30s | %-10s \n", "Word", "Frequency");
+    printf("---------------------------------------------------\n");
+    for (size_t i = 0; i < engine.distinct_words; i++) {
+        printf(" %-30s | %-10d \n", engine.stats[i].name, engine.stats[i].count);
+    }
+    printf("---------------------------------------------------\n");
+}
+
+void sort_word_statistics(void) {
+    print_header();
+    printf("\n--- Sort Word Statistics ---\n");
+    printf("[1] Sort Alphabetically (A-Z)\n");
+    printf("[2] Sort by Frequency (Highest to Lowest)\n");
+    printf("Select option: ");
+
+    int choice;
+    if (scanf("%d", &choice) != 1) {
+        while(getchar() != '\n');
+        return;
+    }
+    while(getchar() != '\n');
+
+    for (size_t i = 0; i < engine.distinct_words; i++) {
+        for (size_t j = i + 1; j < engine.distinct_words; j++) {
+            int condition = 0;
+            if (choice == 1) {
+                condition = (strcmp(engine.stats[i].name, engine.stats[j].name) > 0);
+            } else if (choice == 2) {
+                condition = (engine.stats[i].count < engine.stats[j].count);
+            }
+
+            if (condition) {
+                WordStat temp = engine.stats[i];
+                engine.stats[i] = engine.stats[j];
+                engine.stats[j] = temp;
+            }
+        }
+    }
+    printf("Word statistics successfully sorted!\n");
+    display_word_statistics();
+}
+
+void search_word(void) {
+    print_header();
+    printf("\n--- Search Word ---\n");
+    printf("Enter word to search: ");
+    char target[MAX_WORD_LEN];
+    if (fgets(target, sizeof(target), stdin)) {
+        target[strcspn(target, "\n")] = '\0';
+    }
+
+    for (size_t i = 0; i < engine.distinct_words; i++) {
+        if (strcmp(engine.stats[i].name, target) == 0) {
+            printf("\nFound\nWord: '%s' appears %d time(s).\n", engine.stats[i].name, engine.stats[i].count);
+            return;
+        }
+    }
+    printf("Word '%s' not found.\n", target);
+}
+
+void custom_linguistic_analysis(void) {
+    print_header();
+    if (engine.total_words == 0) {
+        printf("\nNo text analyzed.\n");
+        return;
+    }
+
+    //ratio of distinct words to total words * 100
+    float lds = ((float)engine.distinct_words / (float)engine.total_words) * 100.0f;
+
+    printf("\n------------------------------------------------------\n");
+    printf("CUSTOM ANALYSIS: LEXICAL DIVERSITY SCORE (LDS)\n");
+    printf("--------------------------------------------------------\n");
+    printf("Formula       : (Distinct Words / Total Words) * 100\n");
+    printf("Calculation   : (%zu / %d) * 100\n", engine.distinct_words, engine.total_words);
+    printf("LDS Score     : %.2f%%\n", lds);
+    printf("A higher percentage means a rich vocabulary, a lower score means repetitions.\n");
+}
+
+void generate_text_summary(void) {
+    print_header();
+    if (engine.total_words == 0) {
+        printf("\nNo text data available for summary.\n");
+        return;
+    }
+
+    int total_chars = 0;
+    for (size_t i = 0; i < engine.distinct_words; i++) {
+        total_chars += (int)(strlen(engine.stats[i].name) * engine.stats[i].count);
+    }
+    float avg_len = (float)total_chars / (float)engine.total_words;
+
+    //longest word
+    size_t longest_idx = 0;
+    for (size_t i = 1; i < engine.distinct_words; i++) {
+        if (strlen(engine.stats[i].name) > strlen(engine.stats[longest_idx].name)) longest_idx = i;
+    }
+
+    //most frequent word
+    size_t freq_idx = 0;
+    for (size_t i = 1; i < engine.distinct_words; i++) {
+        if (engine.stats[i].count > engine.stats[freq_idx].count) freq_idx = i;
+    }
+
+    float lds = ((float)engine.distinct_words / (float)engine.total_words) * 100.0f;
+
+    printf("\n---------------------------------------------\n");
+    printf("TEXT SUMMARY REPORT\n");
+    printf("-----------------------------------------------\n");
+    printf("Total Word Count       : %d\n", engine.total_words);
+    printf("Distinct Word Count    : %zu\n", engine.distinct_words);
+    printf("Average Word Length    : %.2f characters\n", avg_len);
+    printf("Longest Word           : %s (%zu chars)\n", engine.stats[longest_idx].name, strlen(engine.stats[longest_idx].name));
+    printf("Most Frequent Word     : %s (%d occurrences)\n", engine.stats[freq_idx].name, engine.stats[freq_idx].count);
+    printf("Lexical Diversity Score: %.2f%%\n", lds);
+}
+
+void exit_program(void) {
+    print_header();
+    free(engine.text_buffer);
+    free(engine.stats);
+    printf("Memory successfully freed. Exiting program.\n");
+    exit(0);
+}
