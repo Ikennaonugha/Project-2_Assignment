@@ -115,3 +115,16 @@ void add_student(void) {
 
     printf("Success: Student record added. Total records: %zu\n", registry.size);
 }
+
+void display_students(void) {
+    print_header();
+    printf("\n--- All Student Records ---\n");
+    printf("-------------------------------------------------------------------\n");
+    printf(" %-6s | %-20s | %-20s | %-6s \n", "ID", "Name", "Course", "Grade");
+    printf("-------------------------------------------------------------------\n");
+
+    for (size_t i = 0; i < registry.size; i++) {
+        Student *s = *(registry.data + i);
+        printf(" %-6d | %-20s | %-20s | %6.2f \n", s->id, s->name, s->course, s->grade);
+    }
+}
