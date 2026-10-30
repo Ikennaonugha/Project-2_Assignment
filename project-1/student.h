@@ -8,3 +8,18 @@
 
 #define INITIAL_CAPACITY 15
 #define MAX_STR 50
+
+typedef struct {
+    int id;
+    char name[MAX_STR];
+    char course[MAX_STR];
+    float grade;
+} Student;
+
+typedef struct {
+    Student **data;
+    size_t size;
+    size_t capacity;
+} StudentRegistry;
+
+extern StudentRegistry registry;
