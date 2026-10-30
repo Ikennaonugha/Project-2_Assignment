@@ -230,7 +230,7 @@ void search_student(void) {
         for (size_t i = 0; i < registry.size; i++) {
             if (registry.data[i]->id == target_id) {
                 Student *s = registry.data[i];
-                printf("\nFound -> ID: %d Name: %s Course: %s Grade: %.2f\n", s->id, s->name, s->course, s->grade);
+                printf("\nFound -> ID: %d \nName: %s \nCourse: %s \nGrade: %.2f\n", s->id, s->name, s->course, s->grade);
                 found = 1;
                 break;
             }
@@ -248,7 +248,7 @@ void search_student(void) {
         for (size_t i = 0; i < registry.size; i++) {
             if (strstr(registry.data[i]->name, target_name) != NULL) {
                 Student *s = registry.data[i];
-                printf("\nFound -> ID: %d Name: %s Course: %s Grade: %.2f\n", s->id, s->name, s->course, s->grade);
+                printf("\nFound -> ID: %d \nName: %s \nCourse: %s \nGrade: %.2f\n", s->id, s->name, s->course, s->grade);
                 found = 1;
             }
         }
