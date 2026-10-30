@@ -128,3 +128,43 @@ void display_students(void) {
         printf(" %-6d | %-20s | %-20s | %6.2f \n", s->id, s->name, s->course, s->grade);
     }
 }
+
+void sort_students(void) {
+    print_header();
+    printf("\n--- Sort Students ---\n");
+    printf("[1] Sort by Grade\n");
+    printf("[2] Sort by Name\n");
+    printf("[3] Sort by Student ID\n");
+    printf("Select sorting choice: ");
+
+    int choice;
+    if (scanf("%d", &choice) != 1) {
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
+    for (size_t i = 0; i < registry.size; i++) {
+        for (size_t j = i + 1; j < registry.size; j++) {
+            Student *s1 = registry.data[i];
+            Student *s2 = registry.data[j];
+            int condition = 0;
+
+            if (choice == 1) {
+                condition = (s1->grade < s2->grade);
+            } else if (choice == 2) {
+                condition = (strcmp(s1->name, s2->name) > 0);
+            } else if (choice == 3) {
+                condition = (s1->id > s2->id);
+            }
+
+            if (condition) {
+                Student *temp = registry.data[i];
+                registry.data[i] = registry.data[j];
+                registry.data[j] = temp;
+            }
+        }
+    }
+    printf("Students successfully sorted\n");
+    display_students();
+}
