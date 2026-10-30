@@ -4,14 +4,14 @@
 TextEngine engine = {NULL, 0, NULL, 0, 0, 0, "", ""};
 
 void print_header(void) {
-    printf("\n------------------------------\n");
-    printf(" Student ID: 1001 (I don't know my student ID\n");
-    printf(" Project: Dynamic Text Mining and Linguistic Pattern Analyzer\n");
-    printf(" Source: %s by %s\n", 
+    printf("\n------------------------------------------------\n");
+    printf("Student ID: 1001 (I don't know my student ID)\n");
+    printf("Project: Dynamic Text Mining and Linguistic Pattern Analyzer\n");
+    printf("Source: %s by %s\n", 
            strlen(engine.source_title) > 0 ? engine.source_title : "Default",
            strlen(engine.source_author) > 0 ? engine.source_author : "Unknown");
-    printf(" Custom Analysis: Lexical Diversity Score (LDS)\n");
-    printf("-------------------------------\n");
+    printf("Custom Analysis: Lexical Diversity Score\n");
+    printf("---------------------------------------------------\n");
 }
 
 void init_engine(void) {
