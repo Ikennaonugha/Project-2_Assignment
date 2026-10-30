@@ -28,7 +28,7 @@ typedef void (*OperationFunc)(void);
 
 //function Prototypes
 void print_header(void);
-void init_initial_dataset(void);
+void initial_dataset(void);
 void clear_input_buffer(void);
 void add_student(void);
 void display_students(void);
